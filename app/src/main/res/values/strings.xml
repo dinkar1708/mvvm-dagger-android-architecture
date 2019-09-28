@@ -58,7 +58,6 @@
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description" />
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_employee_data">No data available!</string>
 
 </resources>

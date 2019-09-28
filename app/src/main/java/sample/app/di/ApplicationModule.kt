@@ -34,7 +34,12 @@ import sample.app.data.source.TasksRepository
 import sample.app.data.source.local.TasksLocalDataSource
 import sample.app.data.source.local.ToDoDatabase
 import sample.app.data.source.remote.TasksRemoteDataSource
+import sample.app.employee.data.EmployeeRemoteDataSource
+
 import sample.app.data.source.remote.network.NetworkServiceInterface
+import sample.app.employee.data.DefaultEmployeeRepository
+import sample.app.employee.data.EmployeeDataSource
+import sample.app.employee.data.EmployeeRepository
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -45,7 +50,34 @@ object ApplicationModule {
 
     @Qualifier
     @Retention(RUNTIME)
+    annotation class EmployeeRemoteDataSource
+
+    @JvmStatic
+    @Singleton
+    @EmployeeRemoteDataSource
+    @Provides
+    fun provideEmployeeRemoteDataSource(ninterface: NetworkServiceInterface): EmployeeDataSource {
+        return EmployeeRemoteDataSource(ninterface)
+    }
+
+//    @JvmStatic
+//    @Singleton
+//    @TasksLocalDataSource
+//    @Provides
+//    fun provideEmployeeRemoteDataSource(
+//            database: ToDoDatabase,
+//            ioDispatcher: CoroutineDispatcher
+//    ): TasksDataSource {
+//        return TasksLocalDataSource(
+//                database.taskDao(), ioDispatcher
+//        )
+//    }
+
+
+    @Qualifier
+    @Retention(RUNTIME)
     annotation class TasksRemoteDataSource
+
 
     @Qualifier
     @Retention(RUNTIME)
@@ -130,4 +162,8 @@ abstract class ApplicationModuleBinds {
     @Singleton
     @Binds
     abstract fun bindRepository(repo: DefaultTasksRepository): TasksRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindEmployeeRepository(repo: DefaultEmployeeRepository): EmployeeRepository
 }

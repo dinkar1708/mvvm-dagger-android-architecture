@@ -1,6 +1,6 @@
-package sample.app.data
+package sample.app.employee.data
 
-data class Employee(
+data class Employee @JvmOverloads constructor(
         val id: String,
         val employee_name: String,
         val employee_salary: String,

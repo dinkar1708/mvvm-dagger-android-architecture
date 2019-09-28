@@ -40,7 +40,7 @@
         android:defaultValue="0" />
     <fragment
         android:id="@+id/employeeFragment"
-        android:name="sample.app.employee.EmployeeFragment"
+        android:name="sample.app.employee.ui.EmployeeFragment"
         android:label="fragment_employee"
         tools:layout="@layout/fragment_employee" >
         <action
