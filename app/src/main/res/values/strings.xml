@@ -58,4 +58,6 @@
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description" />
 
+    <string name="no_employee_data">No data available!</string>
+
 </resources>

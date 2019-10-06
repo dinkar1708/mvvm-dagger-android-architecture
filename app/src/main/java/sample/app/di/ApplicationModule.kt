@@ -18,17 +18,28 @@ package sample.app.di
 
 import android.content.Context
 import androidx.room.Room
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import sample.app.data.source.DefaultTasksRepository
 import sample.app.data.source.TasksDataSource
 import sample.app.data.source.TasksRepository
 import sample.app.data.source.local.TasksLocalDataSource
 import sample.app.data.source.local.ToDoDatabase
 import sample.app.data.source.remote.TasksRemoteDataSource
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import sample.app.employee.data.EmployeeRemoteDataSource
+
+import sample.app.data.source.remote.network.NetworkServiceInterface
+import sample.app.employee.data.DefaultEmployeeRepository
+import sample.app.employee.data.EmployeeDataSource
+import sample.app.employee.data.EmployeeRepository
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -39,7 +50,34 @@ object ApplicationModule {
 
     @Qualifier
     @Retention(RUNTIME)
+    annotation class EmployeeRemoteDataSource
+
+    @JvmStatic
+    @Singleton
+    @EmployeeRemoteDataSource
+    @Provides
+    fun provideEmployeeRemoteDataSource(ninterface: NetworkServiceInterface): EmployeeDataSource {
+        return EmployeeRemoteDataSource(ninterface)
+    }
+
+//    @JvmStatic
+//    @Singleton
+//    @TasksLocalDataSource
+//    @Provides
+//    fun provideEmployeeRemoteDataSource(
+//            database: ToDoDatabase,
+//            ioDispatcher: CoroutineDispatcher
+//    ): TasksDataSource {
+//        return TasksLocalDataSource(
+//                database.taskDao(), ioDispatcher
+//        )
+//    }
+
+
+    @Qualifier
+    @Retention(RUNTIME)
     annotation class TasksRemoteDataSource
+
 
     @Qualifier
     @Retention(RUNTIME)
@@ -49,8 +87,8 @@ object ApplicationModule {
     @Singleton
     @TasksRemoteDataSource
     @Provides
-    fun provideTasksRemoteDataSource(): TasksDataSource {
-        return TasksRemoteDataSource
+    fun provideTasksRemoteDataSource(ninterface: NetworkServiceInterface): TasksDataSource {
+        return TasksRemoteDataSource(ninterface)
     }
 
     @JvmStatic
@@ -71,9 +109,9 @@ object ApplicationModule {
     @Provides
     fun provideDataBase(context: Context): ToDoDatabase {
         return Room.databaseBuilder(
-            context.applicationContext,
-            ToDoDatabase::class.java,
-            "Tasks.db"
+                context.applicationContext,
+                ToDoDatabase::class.java,
+                "Tasks.db"
         ).build()
     }
 
@@ -81,6 +119,41 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun provideIoDispatcher() = Dispatchers.IO
+
+//    @JvmStatic
+//    @Singleton
+//    @Provides
+//    fun provideRetrofit(): Retrofit {
+//        return Retrofit.Builder().baseUrl("https://raw.githubusercontent.com/dinkar1708/APITest/master/apis/")
+//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build()
+//    }
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideRetrofit(): Retrofit {
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val builder = OkHttpClient.Builder()
+        builder.addInterceptor(interceptor)
+
+        return Retrofit.Builder()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("https://raw.githubusercontent.com/dinkar1708/APITest/master/apis/")
+                .client(builder.build())
+                .build()
+    }
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideRetrofitService(retrofit: Retrofit): NetworkServiceInterface {
+        return retrofit.create(NetworkServiceInterface::class.java)
+    }
 }
 
 @Module
@@ -89,4 +162,8 @@ abstract class ApplicationModuleBinds {
     @Singleton
     @Binds
     abstract fun bindRepository(repo: DefaultTasksRepository): TasksRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindEmployeeRepository(repo: DefaultEmployeeRepository): EmployeeRepository
 }

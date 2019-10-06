@@ -15,19 +15,24 @@
  */
 package sample.app.data.source.remote
 
+import android.util.Log
+import kotlinx.coroutines.*
 import sample.app.data.Result
 import sample.app.data.Result.Error
 import sample.app.data.Result.Success
 import sample.app.data.Task
 import sample.app.data.source.TasksDataSource
-import kotlinx.coroutines.delay
+import sample.app.data.source.remote.network.NetworkServiceInterface
 
 /**
  * Implementation of the data source that adds a latency simulating network.
  */
-object TasksRemoteDataSource : TasksDataSource {
+class TasksRemoteDataSource constructor(val networkInterface: NetworkServiceInterface) : TasksDataSource {
 
-    private const val SERVICE_LATENCY_IN_MILLIS = 2000L
+//    @Inject
+//    var service: NetworkServiceInterface? = null
+
+    private val SERVICE_LATENCY_IN_MILLIS = 2000L
 
     private var TASKS_SERVICE_DATA = LinkedHashMap<String, Task>(2)
 
@@ -45,6 +50,9 @@ object TasksRemoteDataSource : TasksDataSource {
         // Simulate network by delaying the execution.
         val tasks = TASKS_SERVICE_DATA.values.toList()
         delay(SERVICE_LATENCY_IN_MILLIS)
+
+        getEmployees()
+
         return Success(tasks)
     }
 
@@ -105,4 +113,23 @@ object TasksRemoteDataSource : TasksDataSource {
     override suspend fun deleteTask(taskId: String) {
         TASKS_SERVICE_DATA.remove(taskId)
     }
+
+    suspend fun getEmployees() {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            // get data from api in io scope
+            val response = networkInterface.getAllEmployees()
+            // main scope send data on UI
+            withContext(Dispatchers.Main) {
+                try {
+                    Log.d("res", "requestPasswordReset response $response")
+                    val responseBody = response.body()
+                    Log.d("res", " data $responseBody")
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
 }

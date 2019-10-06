@@ -23,6 +23,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import sample.app.EventObserver
 import sample.app.R
 import sample.app.databinding.AddtaskFragBinding
@@ -52,6 +53,7 @@ class AddEditTaskFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.addtask_frag, container, false)
+
         viewDataBinding = AddtaskFragBinding.bind(root).apply {
             this.viewmodel = viewModel
         }
