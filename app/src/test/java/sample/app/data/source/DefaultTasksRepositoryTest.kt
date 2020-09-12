@@ -24,7 +24,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
-import sample.app.data.source.DefaultTasksRepository
 
 /**
  * Unit tests for the implementation of the in-memory repository with cache.

@@ -18,7 +18,6 @@ package sample.app
 
 import androidx.lifecycle.LiveData
 import org.junit.Assert.assertEquals
-import sample.app.Event
 
 fun assertLiveDataEventTriggered(
         liveData: LiveData<Event<String>>,

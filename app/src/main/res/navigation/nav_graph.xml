@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/employeeFragment">
+    app:startDestination="@id/addEditTaskFragment">
 
     <fragment
         android:id="@+id/tasksFragment"
@@ -21,14 +21,16 @@
     <fragment
         android:id="@+id/addEditTaskFragment"
         android:name="sample.app.addedittask.AddEditTaskFragment"
-        android:label="{title}">
+        android:label="fragment_addEmployee">
         <argument
             android:name="taskId"
             app:argType="string"
+            android:defaultValue="title"
             app:nullable="true" />
         <argument
             android:name="title"
             app:argType="string"
+            android:defaultValue="title"
             app:nullable="false" />
         <action
             android:id="@+id/action_addEditTaskFragment_to_tasksFragment"

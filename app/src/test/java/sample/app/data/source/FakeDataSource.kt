@@ -20,7 +20,6 @@ import sample.app.data.Result
 import sample.app.data.Result.Error
 import sample.app.data.Result.Success
 import sample.app.data.Task
-import sample.app.data.source.TasksDataSource
 
 class FakeDataSource(var tasks: MutableList<Task>? = mutableListOf()) : TasksDataSource {
     override suspend fun getTasks(): Result<List<Task>> {
