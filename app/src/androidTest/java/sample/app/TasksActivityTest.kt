@@ -88,7 +88,7 @@ class TasksActivityTest {
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         // Click on the "+" button, add details, and save
-        onView(withId(R.id.fab_add_task)).perform(click())
+//        onView(withId(R.id.fab_add_task)).perform(click())
         onView(withId(R.id.add_task_title)).perform(typeText("title"), closeSoftKeyboard())
         onView(withId(R.id.add_task_description)).perform(typeText("description"))
         onView(withId(R.id.fab_save_task)).perform(click())
